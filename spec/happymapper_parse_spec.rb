@@ -125,6 +125,10 @@ describe HappyMapper do
       expect(object.location).to eq 'Oldenburg'
     end
 
+    it 'simulates an element named location' do
+      expect(object.class.elements.map(&:name).map(&:to_sym)).to include(:location)
+    end
+
     context 'given city is unavailable' do
       before(:each) { xml.gsub!('Oldenburg', '') }
 

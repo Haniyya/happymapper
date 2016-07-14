@@ -120,6 +120,9 @@ module HappyMapper
           attr_accessor element.method_name.intern
           element
         end
+        sim = Element.new(name, type, options) # simulate element
+        @elements[name] = sim
+        attr_writer sim.method_name.intern
         define_method name do
           options[:tags].each do |t|
             return send(t) unless send(t).to_s.empty?
