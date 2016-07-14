@@ -110,4 +110,35 @@ describe HappyMapper do
 
   end
 
+  context 'with optional tags' do
+    module OptionalTagsSpec
+      class Address
+        include HappyMapper
+        element :location, String, tags: %w{city state country}
+      end
+    end
+
+    let(:xml) { fixture_file('address.xml') }
+    let(:object) { OptionalTagsSpec::Address.parse(xml) }
+
+    it 'should return city first if available' do
+      expect(object.location).to eq 'Oldenburg'
+    end
+
+    context 'given city is unavailable' do
+      before(:each) { xml.gsub!('Oldenburg', '') }
+
+      it 'should return state if city is unavailable' do
+        expect(object.location).to eq 'Lower Saxony'
+      end
+
+      context 'and state is unavailable' do
+        before(:each) { xml.gsub!('Lower Saxony', '') }
+
+        it 'should return country' do
+          expect(object.location).to eq 'Germany'
+        end
+      end
+    end
+  end
 end
