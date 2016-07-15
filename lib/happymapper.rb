@@ -122,14 +122,25 @@ module HappyMapper
         end
         sim = Element.new(name, type, options) # simulate element
         @elements[name] = sim
+        last_resort = setup_placeholder(name, type, options).method_name.intern
         attr_writer sim.method_name.intern
         define_method name do
           options[:tags].each do |t|
             return send(t) unless send(t).to_s.empty?
           end
+          return send(last_resort) unless send(last_resort).to_s.empty?
           nil
         end
       end
+    end
+
+    def setup_placeholder(name, type, options={})
+      placeholder_name = name.to_s + '_ph'
+      op = options.dup
+      op[:tag] = name.to_s
+      element = Element.new(placeholder_name, type, op)
+      attr_accessor element.method_name.intern
+      @elements[placeholder_name] = element
     end
 
       #

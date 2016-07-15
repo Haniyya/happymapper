@@ -114,13 +114,22 @@ describe HappyMapper do
     module OptionalTagsSpec
       class Address
         include HappyMapper
-        element :location, String, tags: %w{city state country }
+        element :location, String, tags: %w(city state country )
         element :created_at , Date, tags: %w(pubdate created issued)
+        element :street, String, tags: %w(road alley)
       end
     end
 
     let(:xml) { fixture_file('address.xml') }
     let(:object) { OptionalTagsSpec::Address.parse(xml) }
+
+    it 'resturns the element with the name if the rest is unavailable' do
+      expect(object.street).to eq 'Milchstrasse'
+    end
+
+    it 'holds a placeholder element' do
+      expect(object.class.elements.map(&:method_name).map(&:intern)).to include(:street_ph)
+    end
 
     it 'should return city first if available' do
       expect(object.location).to eq 'Oldenburg'
