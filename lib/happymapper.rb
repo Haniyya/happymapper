@@ -113,12 +113,12 @@ module HappyMapper
         @elements[name] = element
         attr_accessor element.method_name.intern
       else
-        elems = options[:tags].map do |t|
+        options[:tags].each do |t|
           op = options.dup.merge(tag: t)
-          element = Element.new(t, type, op)
+          n = t.to_s.gsub(':', '_')
+          element = Element.new(n, type, op)
           @elements[t.to_sym] = element
           attr_accessor element.method_name.intern
-          element
         end
         sim = Element.new(name, type, options) # simulate element
         @elements[name] = sim
@@ -127,6 +127,7 @@ module HappyMapper
           options[:tags].each do |t|
             return send(t) unless send(t).to_s.empty?
           end
+          nil
         end
       end
     end

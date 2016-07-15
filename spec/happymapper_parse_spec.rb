@@ -114,7 +114,8 @@ describe HappyMapper do
     module OptionalTagsSpec
       class Address
         include HappyMapper
-        element :location, String, tags: %w{city state country}
+        element :location, String, tags: %w{city state country }
+        element :created_at , Date, tags: %w(pubdate created issued)
       end
     end
 
@@ -127,6 +128,10 @@ describe HappyMapper do
 
     it 'simulates an element named location' do
       expect(object.class.elements.map(&:name).map(&:to_sym)).to include(:location)
+    end
+
+    it 'resturns nil if none of the tags are found' do
+      expect(object.created_at).to be nil
     end
 
     context 'given city is unavailable' do
